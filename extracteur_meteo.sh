@@ -1,12 +1,15 @@
 #!/bin/bash
 
+# Ville utilisée si aucun argument n'est fourni
+VILLE_PAR_DEFAUT="Toulouse"
+
 # Récupération de la ville en argument
 ville="$1"
 
-# Vérification si la ville a été fournie en argument
+# Si aucune ville n'a été fournie, on utilise la ville par défaut
 if [ -z "$ville" ]; then
-    echo "Utilisation : $0 <ville>"
-    exit 1
+    ville="$VILLE_PAR_DEFAUT"
+    echo "Aucune ville fournie, utilisation de la ville par défaut : $ville"
 fi
 
 # Créer le dossier "donnees" s'il n'existe pas
