@@ -80,8 +80,7 @@ cd /chemin/vers/le/projet : cron ne démarre pas dans le dossier du projet, donc
 
 bash extracteur\_meteo.sh : lance le script. Sans ville en argument, il utilise la ville par défaut ; on peut aussi en préciser une, par exemple bash extracteur\_meteo.sh Paris.
 
->> donnees/cron.log 2>\&1 : enregistre les messages et les éventuelles erreurs du script dans le fichier donnees/cron.log. C'est pratique pour vérifier que cron a bien lancé le script.
-
+`>> donnees/cron.log 2>&1` : enregistre les messages et les éventuelles erreurs du script dans le fichier donnees/cron.log. C'est pratique pour vérifier que cron a bien lancé le script.
 
 
 **Arrêter la tâche cron:**
