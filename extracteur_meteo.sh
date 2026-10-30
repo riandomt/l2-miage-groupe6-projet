@@ -15,8 +15,6 @@ fi
 # Créer le dossier "donnees" s'il n'existe pas
 mkdir -p donnees
 
-# Suppression du fichier "meteo.txt" s'il existe
-rm -f "donnees/meteo.txt"
 
 # Récupération des données météo de la ville spécifiée
 curl -s "wttr.in/$ville?T" -o "donnees/meteo_temp.txt"
