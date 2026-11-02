@@ -54,5 +54,13 @@ temperatureActuelle="${temperatureActuelle}°C"
 temperatureDemain="${temperatureDemain}°C"
 
 # Ajout des données dans le fichier meteo.txt
-echo "$(date +%Y-%m-%d) - $(date +%H:%M:%S) - $ville : $temperatureActuelle - $temperatureDemain" \
-    >> "donnees/meteo.txt"
+date_jour=$(date +%Y-%m-%d)
+heure=$(date +%H:%M:%S)
+ligne="$date_jour - $heure - $ville : $temperatureActuelle - $temperatureDemain"
+echo "$ligne" >> "donnees/meteo.txt"
+
+# Version 3 : copie dans le fichier du jour (donnees/meteo_AAAAMMJJ.txt)
+if [ "$archive" -eq 1 ]; then
+    jour=$(echo "$date_jour" | tr -d '-')
+    echo "$ligne" >> "donnees/meteo_$jour.txt"
+fi
