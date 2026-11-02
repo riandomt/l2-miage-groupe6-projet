@@ -86,3 +86,22 @@ bash extracteur\_meteo.sh : lance le script. Sans ville en argument, il utilise 
 **Arrêter la tâche cron:**
 
 Il suffit de refaire crontab -e et de supprimer la ligne (ou d'ajouter un # au début pour la désactiver).
+
+
+
+## Version 3 : Gestion d'historique
+
+L'option `-a` archive chaque relevé dans un fichier différent par jour :
+`donnees/meteo_AAAAMMJJ.txt` (exemple : `donnees/meteo_20261102.txt`).
+Chaque exécution avec `-a` ajoute une ligne au fichier de la journée.
+L'option doit être placée avant la ville.
+
+Exemples :
+
+    ./extracteur_meteo.sh -a Toulouse   # meteo.txt + fichier du jour
+    ./extracteur_meteo.sh -a            # ville par défaut + fichier du jour
+    ./extracteur_meteo.sh Toulouse      # meteo.txt uniquement
+
+Avec cron (toutes les heures, avec archivage) :
+
+    0 * * * * cd /chemin/vers/le/projet && bash extracteur_meteo.sh -a >> donnees/cron.log 2>&1
