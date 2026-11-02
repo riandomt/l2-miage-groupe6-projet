@@ -1,5 +1,14 @@
 #!/bin/bash
 
+
+# Version 3 : option -a pour archiver dans un fichier par jour
+archive=0
+if [ "$1" = "-a" ]; then
+    archive=1
+    shift
+fi
+
+
 # Ville utilisée si aucun argument n'est fourni
 VILLE_PAR_DEFAUT="Toulouse"
 
