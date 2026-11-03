@@ -87,46 +87,57 @@ bash extracteur\_meteo.sh : lance le script. Sans ville en argument, il utilise 
 
 Il suffit de refaire crontab -e et de supprimer la ligne (ou d'ajouter un # au début pour la désactiver).
 
----
 
-## Variante 2 — Export JSON
 
-**Auteur** : BELBOUALIA Chouaib
+## Version 3 : Gestion d'historique
 
-### Description
-Cette variante exporte les données météo au format JSON dans le fichier `donnees/meteo.json` au lieu du fichier texte.
+L'option `-a` archive chaque relevé dans un fichier différent par jour :
+`donnees/meteo_AAAAMMJJ.txt` (exemple : `donnees/meteo_20261102.txt`).
+Chaque exécution avec `-a` ajoute une ligne au fichier de la journée.
+L'option doit être placée avant la ville.
 
-### Utilisation
-```bash
-bash extracteur_meteo.sh [ville]
-```
-Si aucune ville n'est fournie, Paris est utilisée par défaut.
+Exemples :
 
-### Exemple
-```bash
-bash extracteur_meteo.sh Toulouse
-```
+    ./extracteur_meteo.sh -a Toulouse   # meteo.txt + fichier du jour
+    ./extracteur_meteo.sh -a            # ville par défaut + fichier du jour
+    ./extracteur_meteo.sh Toulouse      # meteo.txt uniquement
 
-### Données extraites
-- Date et heure d'extraction
-- Ville
-- Température actuelle (°C)
-- Prévision du lendemain (°C)
-- Vitesse du vent (km/h)
-- Taux d'humidité (%)
-- Visibilité (km)
+Avec cron (toutes les heures, avec archivage) :
 
-### Fichier généré
-`donnees/meteo.json` — exemple :
-```json
-{
-  "date": "2026-11-03",
-  "heure": "17:00:00",
-  "ville": "Toulouse",
-  "temperature": "12°C",
-  "prevision": "10°C",
-  "vent": "15 km/h",
-  "humidite": "78%",
-  "visibilite": "10 km"
-}
-```
+    0 * * * * cd /chemin/vers/le/projet && bash extracteur_meteo.sh -a >> donnees/cron.log 2>&1
+
+## Variante 2 : Sauvegarde au format JSON
+
+L'option `-j` enregistre le relevé dans `donnees/meteo.json` **au lieu** du fichier texte `meteo.txt`.
+Le fichier JSON est réécrit à chaque exécution : il contient toujours la dernière mesure.
+Les options se placent avant la ville.
+
+Exemples :
+
+    ./extracteur_meteo.sh -j Toulouse   # donnees/meteo.json uniquement
+    ./extracteur_meteo.sh -j            # ville par défaut (Toulouse)
+    ./extracteur_meteo.sh Toulouse      # comportement normal : meteo.txt
+
+Exemple de fichier généré :
+
+    {
+      "date": "2026-11-03",
+      "heure": "17:12",
+      "ville": "Toulouse",
+      "temperature": "11°C",
+      "prevision": "6°C",
+      "vent": "10 km/h",
+      "humidite": "non disponible",
+      "visibilite": "10 km"
+    }
+
+Origine des données dans la sortie texte de wttr.in :
+
+| Champ | Ligne | Contenu |
+|-|-|-|
+| temperature | 4 | température actuelle |
+| vent | 5 | vitesse du vent actuelle |
+| visibilite | 6 | visibilité actuelle |
+| prevision | 23 | température de demain matin |
+
+L'humidité n'apparaît pas dans la sortie texte de wttr.in. Le sujet impose de travailler uniquement sur ce format, donc le champ vaut `non disponible`.
