@@ -86,3 +86,47 @@ bash extracteur\_meteo.sh : lance le script. Sans ville en argument, il utilise 
 **Arrêter la tâche cron:**
 
 Il suffit de refaire crontab -e et de supprimer la ligne (ou d'ajouter un # au début pour la désactiver).
+
+---
+
+## Variante 2 — Export JSON
+
+**Auteur** : BELBOUALIA Chouaib
+
+### Description
+Cette variante exporte les données météo au format JSON dans le fichier `donnees/meteo.json` au lieu du fichier texte.
+
+### Utilisation
+```bash
+bash extracteur_meteo.sh [ville]
+```
+Si aucune ville n'est fournie, Paris est utilisée par défaut.
+
+### Exemple
+```bash
+bash extracteur_meteo.sh Toulouse
+```
+
+### Données extraites
+- Date et heure d'extraction
+- Ville
+- Température actuelle (°C)
+- Prévision du lendemain (°C)
+- Vitesse du vent (km/h)
+- Taux d'humidité (%)
+- Visibilité (km)
+
+### Fichier généré
+`donnees/meteo.json` — exemple :
+```json
+{
+  "date": "2026-11-03",
+  "heure": "17:00:00",
+  "ville": "Toulouse",
+  "temperature": "12°C",
+  "prevision": "10°C",
+  "vent": "15 km/h",
+  "humidite": "78%",
+  "visibilite": "10 km"
+}
+```
