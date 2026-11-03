@@ -141,3 +141,5 @@ Origine des données dans la sortie texte de wttr.in :
 | prevision | 23 | température de demain matin |
 
 L'humidité n'apparaît pas dans la sortie texte de wttr.in. Le sujet impose de travailler uniquement sur ce format, donc le champ vaut `non disponible`.
+
+En mode `-j`, l'option `-a` n'est pas prise en compte : l'archivage journalier concerne uniquement le fichier texte.
