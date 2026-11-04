@@ -56,7 +56,6 @@ visibilite=$(head -n 6 "donnees/meteo_temp.txt" |
     grep -o -- "[0-9]\+ km" |
     head -n 1)
 
-# Humidité non présente dans la sortie texte
 # Humidité
 humidite=$(grep -o -- "[0-9]\+%" "donnees/meteo_temp.txt" |
     head -n 1)
