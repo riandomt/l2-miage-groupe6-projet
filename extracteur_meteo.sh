@@ -57,7 +57,13 @@ visibilite=$(head -n 6 "donnees/meteo_temp.txt" |
     head -n 1)
 
 # Humidité non présente dans la sortie texte
-humidite="non disponible"
+# Humidité
+humidite=$(grep -o -- "[0-9]\+%" "donnees/meteo_temp.txt" |
+    head -n 1)
+
+if [ -z "$humidite" ]; then
+    humidite="non disponible"
+fi
 
 # Valeurs de secours
 if [ -z "$vent" ]; then
