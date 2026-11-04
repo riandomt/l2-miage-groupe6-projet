@@ -42,6 +42,32 @@ temperatureDemain=$(
         head -n 1
 )
 
+# Variante 1 : récupération des informations supplémentaires
+
+# Vitesse du vent (ligne 5)
+vent=$(head -n 5 "donnees/meteo_temp.txt" |
+    tail -n 1 |
+    grep -o -- "[0-9]\+ km/h" |
+    head -n 1)
+
+# Visibilité (ligne 6)
+visibilite=$(head -n 6 "donnees/meteo_temp.txt" |
+    tail -n 1 |
+    grep -o -- "[0-9]\+ km" |
+    head -n 1)
+
+# Humidité non présente dans la sortie texte
+humidite="non disponible"
+
+# Valeurs de secours
+if [ -z "$vent" ]; then
+    vent="non disponible"
+fi
+
+if [ -z "$visibilite" ]; then
+    visibilite="non disponible"
+fi
+
 # Vérification si les températures ont été trouvées
 if [ -z "$temperatureActuelle" ] || [ -z "$temperatureDemain" ]; then
     echo "Erreur : température non trouvée."
@@ -56,7 +82,9 @@ temperatureDemain="${temperatureDemain}°C"
 # Ajout des données dans le fichier meteo.txt
 date_jour=$(date +%Y-%m-%d)
 heure=$(date +%H:%M:%S)
-ligne="$date_jour - $heure - $ville : $temperatureActuelle - $temperatureDemain"
+
+ligne="$date_jour - $heure - $ville : $temperatureActuelle - $temperatureDemain - Vent : $vent - Humidité : $humidite - Visibilité : $visibilite"
+
 echo "$ligne" >> "donnees/meteo.txt"
 
 # Version 3 : copie dans le fichier du jour (donnees/meteo_AAAAMMJJ.txt)
