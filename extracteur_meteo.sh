@@ -31,6 +31,8 @@ done
 # Ville en argument ou ville par défaut (version 2)
 VILLE_PAR_DEFAUT="Toulouse"
 ville="$1"
+
+# Si aucune ville n'est fournie, on utilise la ville par défaut
 if [ -z "$ville" ]; then
     ville="$VILLE_PAR_DEFAUT"
     echo "Aucune ville fournie, utilisation de la ville par défaut : $ville"
@@ -39,10 +41,15 @@ fi
 # Récupération des données météo depuis wttr.in
 # -f : curl renvoie une erreur si le serveur répond par une erreur HTTP
 curl -sf "wttr.in/$ville?T" -o "donnees/meteo_temp.txt"
+
+
+# Vérification de la réussite de la récupération des données
 if [ $? -ne 0 ]; then
     log_erreur "Impossible de contacter wttr.in pour la ville $ville."
     exit 1
 fi
+
+# Vérification si le fichier de données est vide
 if [ ! -s "donnees/meteo_temp.txt" ]; then
     log_erreur "Réponse vide de wttr.in pour la ville $ville."
     exit 1
@@ -69,6 +76,7 @@ visibilite=$(head -n 6 "donnees/meteo_temp.txt" |
 humidite=$(grep -o -- "[0-9]\+%" "donnees/meteo_temp.txt" |
     head -n 1)
 
+# Valeurs de secours
 if [ -z "$humidite" ]; then
     humidite="non disponible"
 fi
@@ -78,6 +86,7 @@ if [ -z "$vent" ]; then
     vent="non disponible"
 fi
 
+# Valeurs de secours
 if [ -z "$visibilite" ]; then
     visibilite="non disponible"
 fi
