@@ -128,7 +128,7 @@ Avec cron (toutes les heures, avec archivage) :
 Dans cette variante, nous avons ajouté trois informations supplémentaires au script :
 
 - La vitesse du vent (km/h)
-- L’humidité (%)
+- L’humidité : non disponible (absente de la sortie texte de wttr.in)
 - La visibilité (km)
 
 Les données sont récupérées depuis le site wttr.in à l’aide de la commande curl.
@@ -145,7 +145,7 @@ Sans argument, le script utilise Toulouse comme ville par défaut.
 
 Exemple de résultat :
 
-    2026-11-04 - 15:30:00 - Toulouse : 15°C - 17°C - Vent : 10 km/h - Humidité : 65% - Visibilité : 10 km
+    2026-11-04 - 15:30:00 - Toulouse : 15°C - 17°C - Vent : 10 km/h - Humidité : non disponible - Visibilité : 10 km
 
 Cet exemple est illustratif ; les valeurs réelles dépendent des données météo récupérées.
 
