@@ -25,7 +25,6 @@ curl -s "wttr.in/$ville?T" -o "donnees/meteo_temp.txt"
 temperatureActuelle=$(head -n 4 donnees/meteo_temp.txt | tail -n 1 | grep -o -- "-\?[0-9]\+" | head -n 1)
 temperatureDemain=$(head -n 23 donnees/meteo_temp.txt | tail -n 1 | grep -o -- "-\?[0-9]\+" | head -n 1)
 
-
 # Variante 1 : récupération des informations supplémentaires
 # Vitesse du vent (ligne 5)
 vent=$(head -n 5 "donnees/meteo_temp.txt" |
@@ -56,13 +55,15 @@ if [ -z "$visibilite" ]; then
     visibilite="non disponible"
 fi
 
+# Vérification si les températures ont été trouvées
 if [ -z "$temperatureActuelle" ] || [ -z "$temperatureDemain" ]; then
     echo "Erreur : température non trouvée."
+    echo "Données conservées dans donnees/meteo_temp.txt pour le débogage."
     exit 1
 fi
 
 date_jour=$(date +%Y-%m-%d)
-heure=$(date +%H:%M)
+heure=$(date +%H:%M:%S)
 
 if [ "$json" -eq 1 ]; then
     # Mode JSON : remplace le fichier texte, contient la dernière mesure
@@ -80,7 +81,7 @@ if [ "$json" -eq 1 ]; then
 else
     # Ligne formatée issue de la variante 1 avec toutes les informations
     ligne="$date_jour - $heure - $ville : ${temperatureActuelle}°C - ${temperatureDemain}°C - Vent : $vent - Humidité : $humidite - Visibilité : $visibilite"
-    
+
     echo "$ligne" >> donnees/meteo.txt
     if [ "$archive" -eq 1 ]; then
         jour=$(echo "$date_jour" | tr -d '-')

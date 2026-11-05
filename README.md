@@ -106,6 +106,32 @@ Avec cron (toutes les heures, avec archivage) :
 
     0 * * * * cd /chemin/vers/le/projet && bash extracteur_meteo.sh -a >> donnees/cron.log 2>&1
 
+## Variante 1 : Informations météo supplémentaires
+
+Dans cette variante, nous avons ajouté trois informations supplémentaires au script :
+
+* La vitesse du vent (km/h)
+* L’humidité (%)
+* La visibilité (km)
+
+Les données sont récupérées depuis le site wttr.in à l’aide de la commande curl.
+Nous utilisons les commandes head, tail et grep pour extraire les informations.
+
+Si une information n’est pas trouvée, le script affiche « non disponible ».
+Les nouvelles informations sont ajoutées dans le fichier donnees/meteo.txt avec la date, l’heure, la ville et les températures.
+
+Exemple d’utilisation :
+
+    bash extracteur_meteo.sh Toulouse
+
+Sans argument, le script utilise Toulouse comme ville par défaut.
+
+Exemple de résultat :
+
+    2026-11-04 - 15:30:00 - Toulouse : 15°C - 17°C - Vent : 10 km/h - Humidité : 65% - Visibilité : 10 km
+
+Cet exemple est illustratif ; les valeurs réelles dépendent des données météo récupérées.
+
 ## Variante 2 : Sauvegarde au format JSON
 
 L'option `-j` enregistre le relevé dans `donnees/meteo.json` **au lieu** du fichier texte `meteo.txt`.
