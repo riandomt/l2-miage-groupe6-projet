@@ -13,9 +13,9 @@ log_success() {
     echo "Succès : $1"
 }
 
-# Journalisation des erreurs dans donnees/meteo.log (fichier unique)
+# Journalisation des erreurs dans donnees/meteo_error.log (consigne variante 3)
 log_erreur() {
-    echo "$(date '+%Y-%m-%d %H:%M:%S') - ERREUR : $1" >> donnees/meteo.log
+    echo "$(date '+%Y-%m-%d %H:%M:%S') - ERREUR : $1" >> donnees/meteo_error.log
     echo "Erreur : $1" >&2
 }
 
@@ -60,7 +60,8 @@ vent=$(head -n 5 "donnees/meteo_temp.txt" | tail -n 1 | grep -o -- "[0-9]\+ km/h
 visibilite=$(head -n 6 "donnees/meteo_temp.txt" | tail -n 1 | grep -o -- "[0-9]\+ km" | head -n 1)
 
 # Humidité
-humidite=$(grep -o -- "[0-9]\+%" "donnees/meteo_temp.txt" | head -n 1)
+# Absente de la sortie texte de wttr.in : le premier % du fichier est la probabilité de pluie
+humidite=""
 
 if [ -z "$humidite" ]; then
     humidite="non disponible"

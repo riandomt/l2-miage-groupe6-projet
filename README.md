@@ -210,6 +210,8 @@ Erreurs détectées :
 
 En cas d'erreur, le script s'arrête avec le code de sortie `1`. Le message est aussi affiché sur la sortie d'erreur, ce qui permet de le retrouver dans `donnees/cron.log` lorsque le script est lancé par cron.
 
+Pour consulter les succès :
+    cat donnees/meteo.log
 Pour consulter les erreurs :
 
-    cat donnees/meteo.log
+    cat donnees/meteo_error.log
