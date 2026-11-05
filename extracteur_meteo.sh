@@ -102,16 +102,13 @@ if [ -z "$visibilite" ]; then
     visibilite="non disponible"
 fi
 
-# Vérification si les températures ont été trouvées
-# Vérification si les températures ont été trouvées
 if [ -z "$temperatureActuelle" ] || [ -z "$temperatureDemain" ]; then
     log_erreur "Échec de l'extraction des températures pour $ville (ville inconnue ?)."
-    log_erreur "Échec de l'extraction des températures pour $ville (ville inconnue ?)."
+    log_erreur "Données conservées dans donnees/meteo_temp.txt pour le débogage."
     exit 1
 fi
 
 date_jour=$(date +%Y-%m-%d)
-heure=$(date +%H:%M:%S)
 heure=$(date +%H:%M:%S)
 
 if [ "$json" -eq 1 ]; then
@@ -133,7 +130,6 @@ else
     # Format du sujet : [Date] - [Heure] - Ville : [Température] - [Prévision]
     # Format du sujet : [Date] - [Heure] - Ville : [Température] - [Prévision]
     ligne="$date_jour - $heure - $ville : ${temperatureActuelle}°C - ${temperatureDemain}°C - Vent : $vent - Humidité : $humidite - Visibilité : $visibilite"
-
 
     echo "$ligne" >> donnees/meteo.txt
     log_success "Données enregistrées dans donnees/meteo.txt pour $ville"
