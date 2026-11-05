@@ -1,7 +1,5 @@
 #!/bin/bash
 # Projet météo - Groupe 6
-# Variante 3 : gestion des erreurs et des logs
-# Variante 2 : option -j pour sauvegarder en JSON au lieu du fichier texte
 # Usage : ./extracteur_meteo.sh [-a] [-j] [ville]
 #   -a : archive le relevé dans donnees/meteo_AAAAMMJJ.txt (version 3)
 #   -j : enregistre le relevé dans donnees/meteo.json (variante 2)
