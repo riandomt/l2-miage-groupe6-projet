@@ -94,7 +94,7 @@ cd /chemin/vers/le/projet : cron ne démarre pas dans le dossier du projet, donc
 
 \&\& : la suite n'est exécutée que si le cd a marché.
 
-bash extracteur\_meteo.sh : lance le script. Sans ville en argument, il utilise la ville par défaut ; on peut aussi en préciser une, par exemple bash extracteur\_meteo.sh Paris.
+bash extracteur\_meteo.sh : lance le script. Sans ville en argument, il utilise la ville par défaut ; on peut aussi en préciser une, par exemple bash extracteur_meteo.sh Paris.
 
 `>> donnees/cron.log 2>&1` : enregistre les messages et les éventuelles erreurs du script dans le fichier donnees/cron.log. C'est pratique pour vérifier que cron a bien lancé le script.
 
@@ -197,7 +197,8 @@ Chaque exécution est tracée avec un horodatage dans le dossier `donnees/` :
 
 | Fichier | Contenu |
 |-|-|
-| `donnees/meteo.log` | Journal global centralisant toutes les exécutions (succès, informations et erreurs) |
+| `donnees/meteo.log` | exécutions réussies (succès) |
+| `donnees/meteo_error.log` | erreurs : connexion impossible, réponse vide, températures introuvables |
 
 Format d'une ligne :
 
@@ -212,6 +213,6 @@ En cas d'erreur, le script s'arrête avec le code de sortie `1`. Le message est 
 
 Pour consulter les succès :
     cat donnees/meteo.log
-Pour consulter les erreurs :
 
+Pour consulter les erreurs :
     cat donnees/meteo_error.log
