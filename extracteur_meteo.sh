@@ -20,25 +20,6 @@ log_erreur() {
 }
 
 # Analyse des options (-a et -j)
-#   -a : archive le relevé dans donnees/meteo_AAAAMMJJ.txt (version 3)
-#   -j : enregistre le relevé dans donnees/meteo.json (variante 2)
-
-# Création du dossier de stockage et de logs s'il n'existe pas
-mkdir -p donnees
-
-# Journalisation des succès dans donnees/meteo.log
-log_success() {
-    echo "$(date '+%Y-%m-%d %H:%M:%S') - SUCCES : $1" >> donnees/meteo.log
-    echo "Succès : $1"
-}
-
-# Journalisation des erreurs dans donnees/meteo.log (fichier unique)
-log_erreur() {
-    echo "$(date '+%Y-%m-%d %H:%M:%S') - ERREUR : $1" >> donnees/meteo.log
-    echo "Erreur : $1" >&2
-}
-
-# Analyse des options (-a et -j)
 archive=0
 json=0
 while [ "$1" = "-a" ] || [ "$1" = "-j" ]; do
@@ -47,7 +28,6 @@ while [ "$1" = "-a" ] || [ "$1" = "-j" ]; do
     shift
 done
 
-# Ville en argument ou ville par défaut (version 2)
 # Ville en argument ou ville par défaut (version 2)
 VILLE_PAR_DEFAUT="Toulouse"
 ville="$1"
@@ -74,20 +54,13 @@ temperatureDemain=$(head -n 23 donnees/meteo_temp.txt | tail -n 1 | grep -o -- "
 
 # Variante 1 : récupération des informations supplémentaires
 # Vitesse du vent (ligne 5)
-vent=$(head -n 5 "donnees/meteo_temp.txt" |
-    tail -n 1 |
-    grep -o -- "[0-9]\+ km/h" |
-    head -n 1)
+vent=$(head -n 5 "donnees/meteo_temp.txt" | tail -n 1 | grep -o -- "[0-9]\+ km/h" | head -n 1)
 
 # Visibilité (ligne 6)
-visibilite=$(head -n 6 "donnees/meteo_temp.txt" |
-    tail -n 1 |
-    grep -o -- "[0-9]\+ km" |
-    head -n 1)
+visibilite=$(head -n 6 "donnees/meteo_temp.txt" | tail -n 1 | grep -o -- "[0-9]\+ km" | head -n 1)
 
 # Humidité
-humidite=$(grep -o -- "[0-9]\+%" "donnees/meteo_temp.txt" |
-    head -n 1)
+humidite=$(grep -o -- "[0-9]\+%" "donnees/meteo_temp.txt" | head -n 1)
 
 if [ -z "$humidite" ]; then
     humidite="non disponible"
@@ -123,11 +96,10 @@ if [ "$json" -eq 1 ]; then
     echo "  \"humidite\": \"$humidite\","                            >> donnees/meteo.json
     echo "  \"visibilite\": \"$visibilite\""                         >> donnees/meteo.json
     echo "}"                                                         >> donnees/meteo.json
-    log_success "Données enregistrées dans donnees/meteo.json pour $ville"
+    
     log_success "Données enregistrées dans donnees/meteo.json pour $ville"
 else
     # Ligne formatée issue de la variante 1 avec toutes les informations
-    # Format du sujet : [Date] - [Heure] - Ville : [Température] - [Prévision]
     # Format du sujet : [Date] - [Heure] - Ville : [Température] - [Prévision]
     ligne="$date_jour - $heure - $ville : ${temperatureActuelle}°C - ${temperatureDemain}°C - Vent : $vent - Humidité : $humidite - Visibilité : $visibilite"
 
@@ -135,13 +107,9 @@ else
     log_success "Données enregistrées dans donnees/meteo.txt pour $ville"
 
     # Version 3 : archivage journalier
-    log_success "Données enregistrées dans donnees/meteo.txt pour $ville"
-
-    # Version 3 : archivage journalier
     if [ "$archive" -eq 1 ]; then
         jour=$(echo "$date_jour" | tr -d '-')
         echo "$ligne" >> "donnees/meteo_$jour.txt"
-        log_success "Archivage effectué dans donnees/meteo_$jour.txt"
         log_success "Archivage effectué dans donnees/meteo_$jour.txt"
     fi
 fi
