@@ -1,49 +1,31 @@
 #!/bin/bash
+# Projet météo - Groupe 6
+# Variante 2 : option -j pour sauvegarder en JSON au lieu du fichier texte
+# Usage : ./extracteur_meteo.sh [-a] [-j] [ville]
 
-
-# Version 3 : option -a pour archiver dans un fichier par jour
 archive=0
-if [ "$1" = "-a" ]; then
-    archive=1
+json=0
+while [ "$1" = "-a" ] || [ "$1" = "-j" ]; do
+    if [ "$1" = "-a" ]; then archive=1; fi
+    if [ "$1" = "-j" ]; then json=1; fi
     shift
-fi
+done
 
-
-# Ville utilisée si aucun argument n'est fourni
 VILLE_PAR_DEFAUT="Toulouse"
-
-# Récupération de la ville en argument
 ville="$1"
-
-# Si aucune ville n'a été fournie, on utilise la ville par défaut
 if [ -z "$ville" ]; then
     ville="$VILLE_PAR_DEFAUT"
     echo "Aucune ville fournie, utilisation de la ville par défaut : $ville"
 fi
 
-# Créer le dossier "donnees" s'il n'existe pas
 mkdir -p donnees
-
-# Récupération des données météo de la ville spécifiée
 curl -s "wttr.in/$ville?T" -o "donnees/meteo_temp.txt"
 
-# Extraction des températures en conservant le signe négatif éventuel
-temperatureActuelle=$(
-    head -n 4 "donnees/meteo_temp.txt" |
-        tail -n 1 |
-        grep -o -- "-\?[0-9]\+" |
-        head -n 1
-)
-
-temperatureDemain=$(
-    head -n 23 "donnees/meteo_temp.txt" |
-        tail -n 1 |
-        grep -o -- "-\?[0-9]\+" |
-        head -n 1
-)
+# Ligne 4 : température actuelle / ligne 23 : température de demain matin
+temperatureActuelle=$(head -n 4 donnees/meteo_temp.txt | tail -n 1 | grep -o -- "-\?[0-9]\+" | head -n 1)
+temperatureDemain=$(head -n 23 donnees/meteo_temp.txt | tail -n 1 | grep -o -- "-\?[0-9]\+" | head -n 1)
 
 # Variante 1 : récupération des informations supplémentaires
-
 # Vitesse du vent (ligne 5)
 vent=$(head -n 5 "donnees/meteo_temp.txt" |
     tail -n 1 |
@@ -80,20 +62,29 @@ if [ -z "$temperatureActuelle" ] || [ -z "$temperatureDemain" ]; then
     exit 1
 fi
 
-# Formatage des températures
-temperatureActuelle="${temperatureActuelle}°C"
-temperatureDemain="${temperatureDemain}°C"
-
-# Ajout des données dans le fichier meteo.txt
 date_jour=$(date +%Y-%m-%d)
 heure=$(date +%H:%M:%S)
 
-ligne="$date_jour - $heure - $ville : $temperatureActuelle - $temperatureDemain - Vent : $vent - Humidité : $humidite - Visibilité : $visibilite"
+if [ "$json" -eq 1 ]; then
+    # Mode JSON : remplace le fichier texte, contient la dernière mesure
+    echo "{"                                                         > donnees/meteo.json
+    echo "  \"date\": \"$date_jour\","                               >> donnees/meteo.json
+    echo "  \"heure\": \"$heure\","                                  >> donnees/meteo.json
+    echo "  \"ville\": \"$ville\","                                  >> donnees/meteo.json
+    echo "  \"temperature\": \"${temperatureActuelle}°C\","          >> donnees/meteo.json
+    echo "  \"prevision\": \"${temperatureDemain}°C\","              >> donnees/meteo.json
+    echo "  \"vent\": \"$vent\","                                    >> donnees/meteo.json
+    echo "  \"humidite\": \"$humidite\","                            >> donnees/meteo.json
+    echo "  \"visibilite\": \"$visibilite\""                         >> donnees/meteo.json
+    echo "}"                                                         >> donnees/meteo.json
+    echo "Données enregistrées dans donnees/meteo.json"
+else
+    # Ligne formatée issue de la variante 1 avec toutes les informations
+    ligne="$date_jour - $heure - $ville : ${temperatureActuelle}°C - ${temperatureDemain}°C - Vent : $vent - Humidité : $humidite - Visibilité : $visibilite"
 
-echo "$ligne" >> "donnees/meteo.txt"
-
-# Version 3 : copie dans le fichier du jour (donnees/meteo_AAAAMMJJ.txt)
-if [ "$archive" -eq 1 ]; then
-    jour=$(echo "$date_jour" | tr -d '-')
-    echo "$ligne" >> "donnees/meteo_$jour.txt"
+    echo "$ligne" >> donnees/meteo.txt
+    if [ "$archive" -eq 1 ]; then
+        jour=$(echo "$date_jour" | tr -d '-')
+        echo "$ligne" >> "donnees/meteo_$jour.txt"
+    fi
 fi

@@ -105,7 +105,8 @@ Exemples :
 Avec cron (toutes les heures, avec archivage) :
 
     0 * * * * cd /chemin/vers/le/projet && bash extracteur_meteo.sh -a >> donnees/cron.log 2>&1
-Variante 1 : Informations météo supplémentaires
+
+## Variante 1 : Informations météo supplémentaires
 
 Dans cette variante, nous avons ajouté trois informations supplémentaires au script :
 
@@ -114,21 +115,57 @@ Dans cette variante, nous avons ajouté trois informations supplémentaires au s
 * La visibilité (km)
 
 Les données sont récupérées depuis le site wttr.in à l’aide de la commande curl.
-
 Nous utilisons les commandes head, tail et grep pour extraire les informations.
 
 Si une information n’est pas trouvée, le script affiche « non disponible ».
-
 Les nouvelles informations sont ajoutées dans le fichier donnees/meteo.txt avec la date, l’heure, la ville et les températures.
 
-Exemple d’utilisation
+Exemple d’utilisation :
 
-bash extracteur_meteo.sh Toulouse
+    bash extracteur_meteo.sh Toulouse
 
 Sans argument, le script utilise Toulouse comme ville par défaut.
 
-Exemple de résultat
+Exemple de résultat :
 
-2026-11-04 - 15:30:00 - Toulouse : 15°C - 17°C - Vent : 10 km/h - Humidité : 65% - Visibilité : 10 km
+    2026-11-04 - 15:30:00 - Toulouse : 15°C - 17°C - Vent : 10 km/h - Humidité : 65% - Visibilité : 10 km
 
 Cet exemple est illustratif ; les valeurs réelles dépendent des données météo récupérées.
+
+## Variante 2 : Sauvegarde au format JSON
+
+L'option `-j` enregistre le relevé dans `donnees/meteo.json` **au lieu** du fichier texte `meteo.txt`.
+Le fichier JSON est réécrit à chaque exécution : il contient toujours la dernière mesure.
+Les options se placent avant la ville.
+
+Exemples :
+
+    ./extracteur_meteo.sh -j Toulouse   # donnees/meteo.json uniquement
+    ./extracteur_meteo.sh -j            # ville par défaut (Toulouse)
+    ./extracteur_meteo.sh Toulouse      # comportement normal : meteo.txt
+
+Exemple de fichier généré :
+
+    {
+      "date": "2026-11-03",
+      "heure": "17:12",
+      "ville": "Toulouse",
+      "temperature": "11°C",
+      "prevision": "6°C",
+      "vent": "10 km/h",
+      "humidite": "non disponible",
+      "visibilite": "10 km"
+    }
+
+Origine des données dans la sortie texte de wttr.in :
+
+| Champ | Ligne | Contenu |
+|-|-|-|
+| temperature | 4 | température actuelle |
+| vent | 5 | vitesse du vent actuelle |
+| visibilite | 6 | visibilité actuelle |
+| prevision | 23 | température de demain matin |
+
+L'humidité n'apparaît pas dans la sortie texte de wttr.in. Le sujet impose de travailler uniquement sur ce format, donc le champ vaut `non disponible`.
+
+En mode `-j`, l'option `-a` n'est pas prise en compte : l'archivage journalier concerne uniquement le fichier texte.
